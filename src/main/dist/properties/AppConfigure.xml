@@ -1,0 +1,8 @@
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <bean id="manager" class="edu.mcw.rgd.Import">
+        <property name="version" value="--GTEx Import pipeline -- ver. 1.0.1 -- Aug 24, 2018 --" />
+        <property name="sourcePipeline" value="GTEx" />
+    </bean>
+</beans>
