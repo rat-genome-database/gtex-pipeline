@@ -1,3 +1,6 @@
+v 1.0.2, Sep 6, 2018
+ -dependency ojdbc6.jar: no longer distributed as is -- now it is fetched from atlassian maven repo
+
 v 1.0.1, Aug 24, 2018
  -updated logging to log4j
 
