@@ -9,6 +9,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.FileSystemResource;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -42,26 +43,28 @@ public class Import {
         long time0 = System.currentTimeMillis();
 
         log.info(getVersion());
-        log.info(dao.getConnectionInfo());
+        log.info("   "+dao.getConnectionInfo());
+        SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        log.info("   started at "+sdt.format(new Date(time0)));
 
         // QC
-        log.info("QC: get GTEx Ids in RGD");
+        log.debug("QC: get GTEx Ids in RGD");
         List<XdbId> idsInRgd = dao.getGTExXdbIds(getSourcePipeline());
-        log.info("QC: get incoming GTEx Ids");
+        log.debug("QC: get incoming GTEx Ids");
         List<XdbId> idsIncoming = getIncomingIds();
 
         // determine to-be-inserted ids
-        log.info("QC: determine to-be-inserted Ids");
+        log.debug("QC: determine to-be-inserted Ids");
         List<XdbId> idsToBeInserted = new ArrayList<XdbId>(idsIncoming);
         idsToBeInserted.removeAll(idsInRgd);
 
         // determine matching ids
-        log.info("QC: determine matching Ids");
+        log.debug("QC: determine matching Ids");
         List<XdbId> idsMatching = new ArrayList<XdbId>(idsIncoming);
         idsMatching.retainAll(idsInRgd);
 
         // determine to-be-deleted ids
-        log.info("QC: determine to-be-deleted Ids");
+        log.debug("QC: determine to-be-deleted Ids");
         idsInRgd.removeAll(idsIncoming);
         List<XdbId> idsToBeDeleted = idsInRgd;
 
@@ -73,7 +76,7 @@ public class Import {
         }
 
         if( !idsToBeDeleted.isEmpty() ) {
-            log.info("Deleting xdb ids for GTEx (Human): "+idsToBeDeleted.size());
+            log.info("deleting xdb ids for GTEx (Human): "+idsToBeDeleted.size());
             dao.deleteXdbIds(idsToBeDeleted);
         }
 
