@@ -1,14 +1,14 @@
 package edu.mcw.rgd;
 
-import edu.mcw.rgd.datamodel.Gene;
-import edu.mcw.rgd.datamodel.SpeciesType;
-import edu.mcw.rgd.datamodel.XdbId;
+import edu.mcw.rgd.datamodel.*;
 import edu.mcw.rgd.process.Utils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.FileSystemResource;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -23,6 +23,8 @@ public class Import {
     private String sourcePipeline;
 
     Logger log = Logger.getLogger("status");
+
+    NumberFormat plusMinusNF = new DecimalFormat(" +###,###,###; -###,###,###");
 
     public static void main(String[] args) throws Exception {
 
@@ -46,6 +48,8 @@ public class Import {
         log.info("   "+dao.getConnectionInfo());
         SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         log.info("   started at "+sdt.format(new Date(time0)));
+
+        int initialGtexCount = dao.getCountOfGtexIds(getSourcePipeline());
 
         // QC
         log.debug("QC: get GTEx Ids in RGD");
@@ -71,19 +75,24 @@ public class Import {
 
         // loading
         if( !idsToBeInserted.isEmpty() ) {
-            log.info("inserting xdb ids for GTEx (Human): "+idsToBeInserted.size());
             dao.insertXdbs(idsToBeInserted);
+            log.info("inserted xdb ids for GTEx: "+idsToBeInserted.size());
         }
 
         if( !idsToBeDeleted.isEmpty() ) {
-            log.info("deleting xdb ids for GTEx (Human): "+idsToBeDeleted.size());
             dao.deleteXdbIds(idsToBeDeleted);
+            log.info("deleted xdb ids for GTEx:  "+idsToBeDeleted.size());
         }
 
         if( !idsMatching.isEmpty() ) {
-            log.info("matching xdb ids for GTEx (Human): "+idsMatching.size());
             dao.updateModificationDate(idsMatching);
+            log.info("last-modified-date updated for GTEx ids: "+idsMatching.size());
         }
+
+        int finalGtexCount = dao.getCountOfGtexIds(getSourcePipeline());
+        int diffCount = finalGtexCount - initialGtexCount;
+        String diffCountStr = diffCount!=0 ? "     difference: "+ plusMinusNF.format(diffCount) : "";
+        log.info("final GTEx IDs count: "+Utils.formatThousands(finalGtexCount)+diffCountStr);
 
         log.info("GTEx ID generation complete -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
     }

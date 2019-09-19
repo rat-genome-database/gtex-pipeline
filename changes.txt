@@ -1,3 +1,6 @@
+Sep 19, 2019
+ -improved summary
+
 v 1.0.4, Jun 6, 2019
  -tuned up logging
 

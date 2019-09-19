@@ -5,15 +5,16 @@ import edu.mcw.rgd.dao.impl.XdbIdDAO;
 import edu.mcw.rgd.datamodel.Gene;
 import edu.mcw.rgd.datamodel.SpeciesType;
 import edu.mcw.rgd.datamodel.XdbId;
+import edu.mcw.rgd.process.Utils;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * @author mtutaj
  * @since 11/11/17
- * <p>
  * wrapper to handle all DAO code
  */
 public class DAO {
@@ -97,5 +98,10 @@ public class DAO {
             xdbKeys.add(xdbId.getKey());
         }
         return xdao.updateModificationDate(xdbKeys);
+    }
+
+    public int getCountOfGtexIds(String srcPipeline) throws Exception {
+        Date cutoffDate = Utils.addDaysToDate(new Date(), 1);
+        return xdao.getCountOfXdbIdsModifiedBefore(XDB_KEY_GTEX, srcPipeline, cutoffDate);
     }
 }
