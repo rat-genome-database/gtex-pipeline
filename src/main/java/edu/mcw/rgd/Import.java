@@ -91,7 +91,7 @@ public class Import {
 
         int finalGtexCount = dao.getCountOfGtexIds(getSourcePipeline());
         int diffCount = finalGtexCount - initialGtexCount;
-        String diffCountStr = diffCount!=0 ? "     difference: "+ plusMinusNF.format(diffCount) : "";
+        String diffCountStr = diffCount!=0 ? "     difference: "+ plusMinusNF.format(diffCount) : "     no changes";
         log.info("final GTEx IDs count: "+Utils.formatThousands(finalGtexCount)+diffCountStr);
 
         log.info("GTEx ID generation complete -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
