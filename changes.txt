@@ -1,3 +1,6 @@
+May 25, 2020
+ -updated README.md
+
 May 10, 2020
  -updated jar dependencies
 

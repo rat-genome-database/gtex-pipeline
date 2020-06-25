@@ -141,8 +141,8 @@ public class Import {
             }
         }
 
-        log.info("incoming GTEx IDs via gene symbol: "+gtexIdsByGeneSymbol);
         log.info("incoming GTEx IDs via Ensembl Gene id: "+gtexIdsByEnsemblGeneId);
+        log.info("incoming GTEx IDs via gene symbol: "+gtexIdsByGeneSymbol);
 
         return incomingIds;
     }
