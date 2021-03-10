@@ -3,7 +3,7 @@
 # GTex loading pipeline
 #
 . /etc/profile
-APPNAME=GtexPipeline
+APPNAME="gtex-pipeline"
 SERVER=`hostname -s | tr '[a-z]' '[A-Z]'`
 
 APPDIR=/home/rgddata/pipelines/$APPNAME
