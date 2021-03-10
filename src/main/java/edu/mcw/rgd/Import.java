@@ -7,10 +7,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.FileSystemResource;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -32,7 +28,6 @@ public class Import {
 
     public static void main(String[] args) throws Exception {
 
-        test();
         DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
         new XmlBeanDefinitionReader(bf).loadBeanDefinitions(new FileSystemResource("properties/AppConfigure.xml"));
         Import manager = (Import) (bf.getBean("manager"));
@@ -166,91 +161,6 @@ public class Import {
 
     public String getSourcePipeline() {
         return sourcePipeline;
-    }
-
-    public static void test() throws IOException {
-
-        String[] forbidden = {
-                "\nST = T001\n",
-                "\nST = T004\n",
-                "\nST = T005\n",
-                "\nST = T007\n",
-                "\nST = T015\n",
-                "\nST = T103\n",
-                "\nST = T104\n",
-                "\nST = T109\n",
-                "\nST = T114\n",
-                "\nST = T116\n",
-                "\nST = T121\n",
-                "\nST = T122\n",
-                "\nST = T123\n",
-                "\nST = T125\n",
-                "\nST = T126\n",
-                "\nST = T127\n",
-                "\nST = T129\n",
-                "\nST = T130\n",
-                "\nST = T131\n",
-                "\nST = T192\n",
-                "\nST = T194\n",
-                "\nST = T195\n",
-                "\nST = T196\n",
-                "\nST = T197\n",
-        };
-        String fnameIn = "/tmp/c2021.bin";
-        String fnameOut = "/tmp/c2021.bin.txt";
-        BufferedReader in = Utils.openReader(fnameIn);
-        BufferedWriter out = new BufferedWriter(new FileWriter(fnameOut));
-
-        int records = 0;
-        int skipped = 0;
-        StringBuffer rec = new StringBuffer();
-        String line;
-        while( (line=in.readLine())!=null ) {
-            if( line.startsWith("*NEWRECORD") ) {
-                // flush previous record
-                String s = rec.toString();
-                boolean isForbidden = false;
-                if( !s.contains("\nST = ") ) {
-                    isForbidden = true;
-                } else {
-                    for (String forbiddenST : forbidden) {
-                        if (s.contains(forbiddenST)) {
-                            isForbidden = true;
-                            break;
-                        }
-                    }
-                }
-                if( !isForbidden ) {
-                    out.write(s);
-                } else {
-                    skipped ++;
-                }
-                records++;
-                rec = new StringBuffer();
-            }
-            rec.append(line).append("\n");
-        }
-
-        String s = rec.toString();
-        boolean isForbidden = false;
-        for( String forbiddenST: forbidden ) {
-            if( s.contains(forbiddenST) ) {
-                isForbidden = true;
-                break;
-            }
-        }
-        if( !isForbidden ) {
-            out.write(s);
-        } else {
-            skipped ++;
-        }
-
-        in.close();
-        out.close();
-
-        System.out.println("records: "+records+", skipped= "+skipped);
-
-        System.exit(0);
     }
 }
 
