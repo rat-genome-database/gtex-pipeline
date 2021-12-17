@@ -6,7 +6,8 @@ import edu.mcw.rgd.datamodel.Gene;
 import edu.mcw.rgd.datamodel.SpeciesType;
 import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.process.Utils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,8 +24,8 @@ public class DAO {
     XdbIdDAO xdao = new XdbIdDAO();
     GeneDAO gdao = new GeneDAO();
 
-    Logger logInserted = Logger.getLogger("insertedIds");
-    Logger logDeleted = Logger.getLogger("deletedIds");
+    Logger logInserted = LogManager.getLogger("insertedIds");
+    Logger logDeleted = LogManager.getLogger("deletedIds");
 
     public String getConnectionInfo() {
         return xdao.getConnectionInfo();

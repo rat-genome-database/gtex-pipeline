@@ -1,3 +1,6 @@
+Dec 17, 2021
+ upgraded log4j to avoid zero-day exploit
+
 Mar 09, 2021
  renamed pipeline to 'gtex-pipeline'
 

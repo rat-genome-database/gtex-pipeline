@@ -2,7 +2,8 @@ package edu.mcw.rgd;
 
 import edu.mcw.rgd.datamodel.*;
 import edu.mcw.rgd.process.Utils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.FileSystemResource;
@@ -22,7 +23,7 @@ public class Import {
     private String version;
     private String sourcePipeline;
 
-    Logger log = Logger.getLogger("status");
+    Logger log = LogManager.getLogger("status");
 
     NumberFormat plusMinusNF = new DecimalFormat(" +###,###,###; -###,###,###");
 
