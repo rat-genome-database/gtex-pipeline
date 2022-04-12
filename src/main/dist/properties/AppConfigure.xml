@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="manager" class="edu.mcw.rgd.Import">
-        <property name="version" value="GTEx Import pipeline  -- version 2022-01-17" />
+        <property name="version" value="GTEx Import pipeline  -- build Apr 12, 2022" />
         <property name="sourcePipeline" value="GTEx" />
     </bean>
 </beans>
