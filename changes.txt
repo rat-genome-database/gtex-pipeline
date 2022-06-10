@@ -1,3 +1,6 @@
+Jun 10, 2022
+ tuned up logging
+
 Apr 12, 2022
  fixed date stamps in logs
 

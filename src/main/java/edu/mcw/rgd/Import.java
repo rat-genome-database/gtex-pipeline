@@ -77,17 +77,17 @@ public class Import {
         // loading
         if( !idsToBeInserted.isEmpty() ) {
             dao.insertXdbs(idsToBeInserted);
-            log.info("inserted xdb ids for GTEx: "+idsToBeInserted.size());
+            log.info("inserted xdb ids for GTEx: "+Utils.formatThousands(idsToBeInserted.size()));
         }
 
         if( !idsToBeDeleted.isEmpty() ) {
             dao.deleteXdbIds(idsToBeDeleted);
-            log.info("deleted xdb ids for GTEx:  "+idsToBeDeleted.size());
+            log.info("deleted xdb ids for GTEx:  "+Utils.formatThousands(idsToBeDeleted.size()));
         }
 
         if( !idsMatching.isEmpty() ) {
             dao.updateModificationDate(idsMatching);
-            log.info("last-modified-date updated for GTEx ids: "+idsMatching.size());
+            log.info("last-modified-date updated for GTEx ids: "+Utils.formatThousands(idsMatching.size()));
         }
 
         int finalGtexCount = dao.getCountOfGtexIds(getSourcePipeline());
@@ -142,8 +142,8 @@ public class Import {
             }
         }
 
-        log.info("incoming GTEx IDs via Ensembl Gene id: "+gtexIdsByEnsemblGeneId);
-        log.info("incoming GTEx IDs via gene symbol: "+gtexIdsByGeneSymbol);
+        log.info("incoming GTEx IDs via Ensembl Gene id: "+Utils.formatThousands(gtexIdsByEnsemblGeneId));
+        log.info("incoming GTEx IDs via gene symbol: "+Utils.formatThousands(gtexIdsByGeneSymbol));
 
         return incomingIds;
     }
