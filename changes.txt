@@ -1,3 +1,6 @@
+Jan 28, 2022
+ updated dependencies
+
 Jun 10, 2022
  tuned up logging
 
