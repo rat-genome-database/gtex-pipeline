@@ -2,6 +2,7 @@ package edu.mcw.rgd;
 
 import edu.mcw.rgd.datamodel.*;
 import edu.mcw.rgd.process.Utils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -52,26 +53,29 @@ public class Import {
 
         int initialGtexCount = dao.getCountOfGtexIds(getSourcePipeline());
 
-        // QC
+
         log.debug("QC: get GTEx Ids in RGD");
         List<XdbId> idsInRgd = dao.getGTExXdbIds(getSourcePipeline());
         log.debug("QC: get incoming GTEx Ids");
         List<XdbId> idsIncoming = getIncomingIds();
 
+
+        // determine xdb ids for insertion, deletion and matching
+        List<XdbId> idsToBeInserted = null;
+        List<XdbId> idsMatching = null;
+        List<XdbId> idsToBeDeleted = null;
+
         // determine to-be-inserted ids
         log.debug("QC: determine to-be-inserted Ids");
-        List<XdbId> idsToBeInserted = new ArrayList<XdbId>(idsIncoming);
-        idsToBeInserted.removeAll(idsInRgd);
+        idsToBeInserted = new ArrayList<>(CollectionUtils.subtract(idsIncoming, idsInRgd));
 
         // determine matching ids
         log.debug("QC: determine matching Ids");
-        List<XdbId> idsMatching = new ArrayList<XdbId>(idsIncoming);
-        idsMatching.retainAll(idsInRgd);
+        idsMatching = new ArrayList<>(CollectionUtils.intersection(idsIncoming, idsInRgd));
 
         // determine to-be-deleted ids
         log.debug("QC: determine to-be-deleted Ids");
-        idsInRgd.removeAll(idsIncoming);
-        List<XdbId> idsToBeDeleted = idsInRgd;
+        idsToBeDeleted = new ArrayList<>(CollectionUtils.subtract(idsInRgd, idsIncoming));
 
 
         // loading
@@ -96,6 +100,7 @@ public class Import {
         log.info("final GTEx IDs count: "+Utils.formatThousands(finalGtexCount)+diffCountStr);
 
         log.info("GTEx ID generation complete -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
+        log.info("====");
     }
 
     List<XdbId> getIncomingIds() throws Exception {

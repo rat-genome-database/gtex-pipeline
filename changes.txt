@@ -1,3 +1,6 @@
+Feb 21, 2023
+  optimized qc logic (to cut down processing time by half)
+
 Feb 20, 2023
   updated build.gradle to be gradle 6.x + compatible
 
@@ -12,8 +15,6 @@ Apr 12, 2022
  fixed date stamps in logs
 
 Jan 17, 2022
- updated dependencies
-
 Jan 03, 2022
  updated dependencies
 
@@ -30,8 +31,6 @@ May 25, 2020
  -updated README.md
 
 May 10, 2020
- -updated jar dependencies
-
 Nov 11, 2019
  -updated dependencies
 
