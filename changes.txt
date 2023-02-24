@@ -1,3 +1,6 @@
+Feb 24, 2023
+ updated dependencies
+
 Feb 21, 2023
   optimized qc logic (to cut down processing time by half)
 
