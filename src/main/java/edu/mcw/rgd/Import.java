@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class Import {
 
-    private DAO dao = new DAO();
+    private final DAO dao = new DAO();
     private String version;
     private String sourcePipeline;
 
@@ -110,7 +110,7 @@ public class Import {
         Date dt = new Date();
 
         List<Gene> genes = dao.getActiveGenes(SpeciesType.HUMAN);
-        List<XdbId> incomingIds = new ArrayList<XdbId>(genes.size());
+        List<XdbId> incomingIds = new ArrayList<>(genes.size());
         for (Gene g: genes) {
 
             // load unique set of ensembl gene ids for this gene
