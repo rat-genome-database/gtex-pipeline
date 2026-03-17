@@ -2,6 +2,7 @@ package edu.mcw.rgd;
 
 import edu.mcw.rgd.datamodel.*;
 import edu.mcw.rgd.datamodel.Map;
+import edu.mcw.rgd.process.MemoryMonitor;
 import edu.mcw.rgd.process.Utils;
 import edu.mcw.rgd.process.mapping.MapManager;
 import org.apache.commons.collections4.CollectionUtils;
@@ -47,6 +48,9 @@ public class Import {
     public void run() throws Exception {
 
         long time0 = System.currentTimeMillis();
+
+        MemoryMonitor memoryMonitor = new MemoryMonitor();
+        memoryMonitor.start();
 
         log.info(getVersion());
         log.info("   "+dao.getConnectionInfo());
@@ -100,6 +104,9 @@ public class Import {
         int diffCount = finalGtexCount - initialGtexCount;
         String diffCountStr = diffCount!=0 ? "     difference: "+ plusMinusNF.format(diffCount) : "     no changes";
         log.info("final GTEx IDs count: "+Utils.formatThousands(finalGtexCount)+diffCountStr);
+
+        memoryMonitor.stop();
+        log.info(memoryMonitor.getSummary());
 
         log.info("GTEx ID generation complete -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
         log.info("====");
