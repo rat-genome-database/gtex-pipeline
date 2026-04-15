@@ -77,7 +77,7 @@ public class Import {
 
         // determine matching ids
         log.debug("QC: determine matching Ids");
-        idsMatching = new ArrayList<>(CollectionUtils.intersection(idsIncoming, idsInRgd));
+        idsMatching = new ArrayList<>(CollectionUtils.intersection(idsInRgd, idsIncoming));
 
         // determine to-be-deleted ids
         log.debug("QC: determine to-be-deleted Ids");
