@@ -1,10 +1,8 @@
 package edu.mcw.rgd;
 
 import edu.mcw.rgd.datamodel.*;
-import edu.mcw.rgd.datamodel.Map;
 import edu.mcw.rgd.process.MemoryMonitor;
 import edu.mcw.rgd.process.Utils;
-import edu.mcw.rgd.process.mapping.MapManager;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;

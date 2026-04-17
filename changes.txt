@@ -1,3 +1,6 @@
+Apr 17, 2026
+  removed unused variantFix.java; cleaned up unused imports
+
 Apr 15, 2026
   fixed updateModificationDate no-op for matching rows
   rewrote README.md
