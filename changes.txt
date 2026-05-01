@@ -1,3 +1,6 @@
+May 01, 2026
+  bug fix: log memory summary and elapsed time on failure path; updated dependencies
+
 Apr 17, 2026
   removed unused variantFix.java; cleaned up unused imports
 

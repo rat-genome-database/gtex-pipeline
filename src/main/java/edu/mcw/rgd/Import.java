@@ -55,59 +55,63 @@ public class Import {
         SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         log.info("   started at "+sdt.format(new Date(time0)));
 
-        int initialGtexCount = dao.getCountOfGtexIds(getSourcePipeline());
+        boolean ok = false;
+        try {
+            int initialGtexCount = dao.getCountOfGtexIds(getSourcePipeline());
 
 
-        log.debug("QC: get GTEx Ids in RGD");
-        List<XdbId> idsInRgd = dao.getGTExXdbIds(getSourcePipeline());
-        log.debug("QC: get incoming GTEx Ids");
-        List<XdbId> idsIncoming = getIncomingIds();
+            log.debug("QC: get GTEx Ids in RGD");
+            List<XdbId> idsInRgd = dao.getGTExXdbIds(getSourcePipeline());
+            log.debug("QC: get incoming GTEx Ids");
+            List<XdbId> idsIncoming = getIncomingIds();
 
 
-        // determine xdb ids for insertion, deletion and matching
-        List<XdbId> idsToBeInserted = null;
-        List<XdbId> idsMatching = null;
-        List<XdbId> idsToBeDeleted = null;
+            // determine xdb ids for insertion, deletion and matching
+            List<XdbId> idsToBeInserted = null;
+            List<XdbId> idsMatching = null;
+            List<XdbId> idsToBeDeleted = null;
 
-        // determine to-be-inserted ids
-        log.debug("QC: determine to-be-inserted Ids");
-        idsToBeInserted = new ArrayList<>(CollectionUtils.subtract(idsIncoming, idsInRgd));
+            // determine to-be-inserted ids
+            log.debug("QC: determine to-be-inserted Ids");
+            idsToBeInserted = new ArrayList<>(CollectionUtils.subtract(idsIncoming, idsInRgd));
 
-        // determine matching ids
-        log.debug("QC: determine matching Ids");
-        idsMatching = new ArrayList<>(CollectionUtils.intersection(idsInRgd, idsIncoming));
+            // determine matching ids
+            log.debug("QC: determine matching Ids");
+            idsMatching = new ArrayList<>(CollectionUtils.intersection(idsInRgd, idsIncoming));
 
-        // determine to-be-deleted ids
-        log.debug("QC: determine to-be-deleted Ids");
-        idsToBeDeleted = new ArrayList<>(CollectionUtils.subtract(idsInRgd, idsIncoming));
+            // determine to-be-deleted ids
+            log.debug("QC: determine to-be-deleted Ids");
+            idsToBeDeleted = new ArrayList<>(CollectionUtils.subtract(idsInRgd, idsIncoming));
 
 
-        // loading
-        if( !idsToBeInserted.isEmpty() ) {
-            dao.insertXdbs(idsToBeInserted);
-            log.info("inserted xdb ids for GTEx: "+Utils.formatThousands(idsToBeInserted.size()));
+            // loading
+            if( !idsToBeInserted.isEmpty() ) {
+                dao.insertXdbs(idsToBeInserted);
+                log.info("inserted xdb ids for GTEx: "+Utils.formatThousands(idsToBeInserted.size()));
+            }
+
+            if( !idsToBeDeleted.isEmpty() ) {
+                dao.deleteXdbIds(idsToBeDeleted);
+                log.info("deleted xdb ids for GTEx:  "+Utils.formatThousands(idsToBeDeleted.size()));
+            }
+
+            if( !idsMatching.isEmpty() ) {
+                dao.updateModificationDate(idsMatching);
+                log.info("last-modified-date updated for GTEx ids: "+Utils.formatThousands(idsMatching.size()));
+            }
+
+            int finalGtexCount = dao.getCountOfGtexIds(getSourcePipeline());
+            int diffCount = finalGtexCount - initialGtexCount;
+            String diffCountStr = diffCount!=0 ? "     difference: "+ plusMinusNF.format(diffCount) : "     no changes";
+            log.info("final GTEx IDs count: "+Utils.formatThousands(finalGtexCount)+diffCountStr);
+
+            ok = true;
+        } finally {
+            memoryMonitor.stop();
+            log.info(memoryMonitor.getSummary());
+            log.info((ok ? "GTEx ID generation complete -- " : "GTEx ID generation FAILED -- ") + "time elapsed: " + Utils.formatElapsedTime(time0, System.currentTimeMillis()));
+            log.info("====");
         }
-
-        if( !idsToBeDeleted.isEmpty() ) {
-            dao.deleteXdbIds(idsToBeDeleted);
-            log.info("deleted xdb ids for GTEx:  "+Utils.formatThousands(idsToBeDeleted.size()));
-        }
-
-        if( !idsMatching.isEmpty() ) {
-            dao.updateModificationDate(idsMatching);
-            log.info("last-modified-date updated for GTEx ids: "+Utils.formatThousands(idsMatching.size()));
-        }
-
-        int finalGtexCount = dao.getCountOfGtexIds(getSourcePipeline());
-        int diffCount = finalGtexCount - initialGtexCount;
-        String diffCountStr = diffCount!=0 ? "     difference: "+ plusMinusNF.format(diffCount) : "     no changes";
-        log.info("final GTEx IDs count: "+Utils.formatThousands(finalGtexCount)+diffCountStr);
-
-        memoryMonitor.stop();
-        log.info(memoryMonitor.getSummary());
-
-        log.info("GTEx ID generation complete -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
-        log.info("====");
     }
 
     List<XdbId> getIncomingIds() throws Exception {
