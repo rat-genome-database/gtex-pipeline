@@ -50,6 +50,19 @@ public class DAO {
     }
 
     /**
+     * return all external ids for given xdb key and species, in a single query
+     * @param xdbKey - external database key (like 2 for PubMed)
+     * @param speciesTypeKey - species type key
+     * @return list of external ids
+     * @throws Exception when unexpected error in spring framework occurs
+     */
+    public List<XdbId> getXdbIds(int xdbKey, int speciesTypeKey) throws Exception {
+        XdbId filter = new XdbId();
+        filter.setXdbKey(xdbKey);
+        return xdao.getXdbIds(filter, speciesTypeKey);
+    }
+
+    /**
      * Returns all active genes for given species. Results do not contain splices or alleles
      * @param speciesKey species type key
      * @return list of active genes for given species
@@ -94,7 +107,7 @@ public class DAO {
 
     public int updateModificationDate(List<XdbId> xdbIds) throws Exception {
 
-        List<Integer> xdbKeys = new ArrayList<Integer>(xdbIds.size());
+        List<Integer> xdbKeys = new ArrayList<>(xdbIds.size());
         for( XdbId xdbId: xdbIds ) {
             xdbKeys.add(xdbId.getKey());
         }

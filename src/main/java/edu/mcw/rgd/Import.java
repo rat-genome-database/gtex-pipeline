@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map;
 
 /**
  * @author mtutaj
@@ -67,21 +68,18 @@ public class Import {
 
 
             // determine xdb ids for insertion, deletion and matching
-            List<XdbId> idsToBeInserted = null;
-            List<XdbId> idsMatching = null;
-            List<XdbId> idsToBeDeleted = null;
 
             // determine to-be-inserted ids
             log.debug("QC: determine to-be-inserted Ids");
-            idsToBeInserted = new ArrayList<>(CollectionUtils.subtract(idsIncoming, idsInRgd));
+            List<XdbId> idsToBeInserted = new ArrayList<>(CollectionUtils.subtract(idsIncoming, idsInRgd));
 
             // determine matching ids
             log.debug("QC: determine matching Ids");
-            idsMatching = new ArrayList<>(CollectionUtils.intersection(idsInRgd, idsIncoming));
+            List<XdbId> idsMatching = new ArrayList<>(CollectionUtils.intersection(idsInRgd, idsIncoming));
 
             // determine to-be-deleted ids
             log.debug("QC: determine to-be-deleted Ids");
-            idsToBeDeleted = new ArrayList<>(CollectionUtils.subtract(idsInRgd, idsIncoming));
+            List<XdbId> idsToBeDeleted = new ArrayList<>(CollectionUtils.subtract(idsInRgd, idsIncoming));
 
 
             // loading
@@ -120,48 +118,47 @@ public class Import {
         int gtexIdsByEnsemblGeneId = 0;
         Date dt = new Date();
 
+        // bulk-load all Ensembl gene ids for human genes once, grouped by rgd id,
+        // instead of issuing one query per gene
+        Map<Integer, Set<String>> ensemblIdsByRgdId = new HashMap<>();
+        for( XdbId x: dao.getXdbIds(XdbId.XDB_KEY_ENSEMBL_GENES, SpeciesType.HUMAN) ) {
+            ensemblIdsByRgdId.computeIfAbsent(x.getRgdId(), k -> new HashSet<>()).add(x.getAccId());
+        }
+
         List<Gene> genes = dao.getActiveGenes(SpeciesType.HUMAN);
         List<XdbId> incomingIds = new ArrayList<>(genes.size());
         for (Gene g: genes) {
 
-            // load unique set of ensembl gene ids for this gene
-            List<XdbId> idsFromDb = dao.getXdbIdsByRgdId(XdbId.XDB_KEY_ENSEMBL_GENES, g.getRgdId());
-            Set<String> ids = new HashSet<String>();
-            for( XdbId x: idsFromDb ) {
-                ids.add(x.getAccId());
-            }
+            Set<String> ids = ensemblIdsByRgdId.getOrDefault(g.getRgdId(), Collections.emptySet());
 
             if( ids.isEmpty() ) {
                 // create GTEx link via gene symbol
-                XdbId x = new XdbId();
-                x.setAccId(g.getSymbol());
-                x.setSrcPipeline(getSourcePipeline());
-                x.setRgdId(g.getRgdId());
-                x.setXdbKey(DAO.XDB_KEY_GTEX);
-                x.setCreationDate(dt);
-                x.setModificationDate(dt);
-                incomingIds.add(x);
+                incomingIds.add(newGtexXdbId(g.getRgdId(), g.getSymbol(), dt));
                 gtexIdsByGeneSymbol++;
             } else {
                 // create GTEx link via Ensembl Gene ID(s)
                 for( String ensemblGeneId: ids ) {
-                    XdbId x = new XdbId();
-                    x.setAccId(ensemblGeneId);
-                    x.setSrcPipeline(getSourcePipeline());
-                    x.setRgdId(g.getRgdId());
-                    x.setXdbKey(DAO.XDB_KEY_GTEX);
-                    x.setCreationDate(dt);
-                    x.setModificationDate(dt);
-                    incomingIds.add(x);
+                    incomingIds.add(newGtexXdbId(g.getRgdId(), ensemblGeneId, dt));
                     gtexIdsByEnsemblGeneId++;
                 }
             }
         }
 
         log.info("incoming GTEx IDs via Ensembl Gene id: "+Utils.formatThousands(gtexIdsByEnsemblGeneId));
-        log.info("incoming GTEx IDs via gene symbol: "+Utils.formatThousands(gtexIdsByGeneSymbol));
+        log.info("incoming GTEx IDs via gene symbol    : "+Utils.formatThousands(gtexIdsByGeneSymbol));
 
         return incomingIds;
+    }
+
+    private XdbId newGtexXdbId(int rgdId, String accId, Date dt) {
+        XdbId x = new XdbId();
+        x.setAccId(accId);
+        x.setSrcPipeline(getSourcePipeline());
+        x.setRgdId(rgdId);
+        x.setXdbKey(DAO.XDB_KEY_GTEX);
+        x.setCreationDate(dt);
+        x.setModificationDate(dt);
+        return x;
     }
 
     public void setVersion(String version) {
