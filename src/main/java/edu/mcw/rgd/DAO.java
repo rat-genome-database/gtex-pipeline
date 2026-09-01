@@ -40,16 +40,6 @@ public class DAO {
     }
 
     /**
-     * return external ids for given xdb key and rgd-id
-     * @param xdbKey - external database key (like 2 for PubMed)
-     * @param rgdId - rgd-id
-     * @return list of external ids
-     */
-    public List<XdbId> getXdbIdsByRgdId(int xdbKey, int rgdId) throws Exception {
-        return xdao.getXdbIdsByRgdId(xdbKey, rgdId);
-    }
-
-    /**
      * return all external ids for given xdb key and species, in a single query
      * @param xdbKey - external database key (like 2 for PubMed)
      * @param speciesTypeKey - species type key

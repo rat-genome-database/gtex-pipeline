@@ -1,3 +1,6 @@
+Sep 1, 2026
+  removed unused DAO method; documented argument-order dependency in matching-ids logic; updated dependencies
+
 Jun 17, 2026
   optimized incoming-id generation: bulk-load Ensembl ids in one query instead of per-gene; minor code cleanups; removed unused commons-net dependency
 

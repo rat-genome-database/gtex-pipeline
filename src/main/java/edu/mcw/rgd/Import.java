@@ -74,6 +74,9 @@ public class Import {
             List<XdbId> idsToBeInserted = new ArrayList<>(CollectionUtils.subtract(idsIncoming, idsInRgd));
 
             // determine matching ids
+            // note: idsInRgd must be the first argument, because intersection() keeps the instances
+            //   from its first argument, and only the in-RGD ids carry ACC_XDB_KEY,
+            //   needed by updateModificationDate()
             log.debug("QC: determine matching Ids");
             List<XdbId> idsMatching = new ArrayList<>(CollectionUtils.intersection(idsInRgd, idsIncoming));
 
