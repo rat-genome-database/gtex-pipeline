@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="manager" class="edu.mcw.rgd.Import">
-        <property name="version" value="gtex-pipeline -- build Sep 1, 2026" />
+        <property name="version" value="gtex-pipeline -- build Oct 20, 2026" />
         <property name="sourcePipeline" value="GTEx" />
     </bean>
 </beans>
