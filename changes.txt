@@ -1,3 +1,6 @@
+Nov 20, 2026
+  run.sh: failed runs flagged in the email subject; active genes loaded as (rgd id, symbol) pairs instead of full gene objects; updated dependencies
+
 Oct 20, 2026
   migrated to postgres; updated dependencies
 
