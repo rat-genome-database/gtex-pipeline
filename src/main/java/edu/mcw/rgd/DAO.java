@@ -2,7 +2,7 @@ package edu.mcw.rgd;
 
 import edu.mcw.rgd.dao.impl.GeneDAO;
 import edu.mcw.rgd.dao.impl.XdbIdDAO;
-import edu.mcw.rgd.datamodel.Gene;
+import edu.mcw.rgd.dao.spring.IntStringMapQuery;
 import edu.mcw.rgd.datamodel.SpeciesType;
 import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.process.Utils;
@@ -53,13 +53,14 @@ public class DAO {
     }
 
     /**
-     * Returns all active genes for given species. Results do not contain splices or alleles
+     * Returns (gene RGD id, gene symbol) pairs for all active genes of given species.
+     * Results do not contain splices or alleles
      * @param speciesKey species type key
-     * @return list of active genes for given species
+     * @return list of pairs: gene RGD id (keyValue) and gene symbol (stringValue)
      * @throws Exception when unexpected error in spring framework occurs
      */
-    public List<Gene> getActiveGenes(int speciesKey) throws Exception {
-        return gdao.getActiveGenes(speciesKey);
+    public List<IntStringMapQuery.MapPair> getSymbolsForActiveGenes(int speciesKey) throws Exception {
+        return gdao.getSymbolForActiveGenes(speciesKey);
     }
 
     /**

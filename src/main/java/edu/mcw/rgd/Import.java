@@ -1,5 +1,6 @@
 package edu.mcw.rgd;
 
+import edu.mcw.rgd.dao.spring.IntStringMapQuery;
 import edu.mcw.rgd.datamodel.*;
 import edu.mcw.rgd.process.MemoryMonitor;
 import edu.mcw.rgd.process.Utils;
@@ -128,20 +129,22 @@ public class Import {
             ensemblIdsByRgdId.computeIfAbsent(x.getRgdId(), k -> new HashSet<>()).add(x.getAccId());
         }
 
-        List<Gene> genes = dao.getActiveGenes(SpeciesType.HUMAN);
+        // (gene rgd id, gene symbol) pairs for active human genes -- the only gene fields needed here
+        List<IntStringMapQuery.MapPair> genes = dao.getSymbolsForActiveGenes(SpeciesType.HUMAN);
         List<XdbId> incomingIds = new ArrayList<>(genes.size());
-        for (Gene g: genes) {
+        for (IntStringMapQuery.MapPair g: genes) {
 
-            Set<String> ids = ensemblIdsByRgdId.getOrDefault(g.getRgdId(), Collections.emptySet());
+            int geneRgdId = g.keyValue;
+            Set<String> ids = ensemblIdsByRgdId.getOrDefault(geneRgdId, Collections.emptySet());
 
             if( ids.isEmpty() ) {
                 // create GTEx link via gene symbol
-                incomingIds.add(newGtexXdbId(g.getRgdId(), g.getSymbol(), dt));
+                incomingIds.add(newGtexXdbId(geneRgdId, g.stringValue, dt));
                 gtexIdsByGeneSymbol++;
             } else {
                 // create GTEx link via Ensembl Gene ID(s)
                 for( String ensemblGeneId: ids ) {
-                    incomingIds.add(newGtexXdbId(g.getRgdId(), ensemblGeneId, dt));
+                    incomingIds.add(newGtexXdbId(geneRgdId, ensemblGeneId, dt));
                     gtexIdsByEnsemblGeneId++;
                 }
             }
